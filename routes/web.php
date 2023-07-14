@@ -13,6 +13,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', [App\Http\Controllers\frontend\HomeController::class, 'index'])->name('home');
+Route::get('/short/{link}', [App\Http\Controllers\frontend\HomeController::class, 'getShortenLink']);
+
+Auth::routes();
+Route::group(['middleware' => 'auth' , 'namespace' => '\App\Http\Controllers\backend'],function () {
+    Route::middleware(['admin'])->group(function () {
+        Route::resource('dashboard', DashboardController::class);
+        Route::resource('manage-user', ManageUserController::class);
+    });
+    Route::resource('manage-url', ManageUrlController::class);
 });

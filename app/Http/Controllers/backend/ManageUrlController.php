@@ -12,6 +12,12 @@ use Log;
 
 class ManageUrlController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('permission')->only(['edit']);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -75,7 +81,8 @@ class ManageUrlController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $result = Url::where('code', $id)->first();
+        return view('backend.manage-url.edit', compact('result'));
     }
 
     /**
@@ -83,7 +90,22 @@ class ManageUrlController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'url' => 'required|url'
+        ]);
+        try{
+            DB::beginTransaction();
+            $result = Url::where('code', $id)->first();
+            $result->url = $request->url;
+            $result->status = $request->has('status') ? 1 : 0;
+            $result->save();
+            DB::commit();
+            return redirect()->route('manage-url.index')->with('success', 'Url updated successfully!');
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error($e->getMessage());
+            return redirect()->back()->withErrors(['msg' => 'Something went wrong!']);
+        }
     }
 
     /**
@@ -92,6 +114,16 @@ class ManageUrlController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function switchStatus(Request $request){
+        $result = Url::where('code',$request->code)->first();
+        if($result){
+            $result->status = $request->status;
+            $result->save();
+            return response()->json(['status' => true, 'msg' => 'Status updated successfully!']);
+        }
+        return response()->json(['status' => false, 'msg' => 'Something went wrong!']);
     }
 
     public function ShortUrl(){

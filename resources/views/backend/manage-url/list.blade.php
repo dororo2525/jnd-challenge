@@ -25,13 +25,14 @@
                     @endif
                     <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#exampleModal"><i
                             class="bi bi-plus-circle me-1"></i> Shorten Url</button>
-                    <table id="example" class="display" style="width:100%">
+                    <table id="table-url" class="display" style="width:100%">
                         <thead>
                             <tr>
                                 <th>Origin Url</th>
                                 <th>Shorten Url</th>
                                 <th>Code</th>
                                 <th>Clicks</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -42,6 +43,11 @@
                                     <td><a href="{{ $url->shorten_url }}">{{ $url->shorten_url }}</a></td>
                                     <td>{{ $url->code }}</td>
                                     <td>{{ $url->hits }}</td>
+                                    <td>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input switch-status" data-code="{{ $url->code }}" type="checkbox" role="switch" {{ $url->status == true ? 'checked' : null }}>
+                                            </div>
+                                    </td>
                                     <td>
                                         <div>
                                             <a href="{{ route('manage-url.edit' , $url->code) }}" class="btn btn-warning btn-sm me-2"><i class="bi bi-pencil-square"></i></a>
@@ -56,6 +62,7 @@
                                 <th>Shorten Url</th>
                                 <th>Code</th>
                                 <th>Clicks</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </tfoot>
@@ -86,14 +93,48 @@
             </div>
         </div>
     </section>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div id="liveToast" class="toast text-white" data-bs-delay="3000" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-body"></div>
+      </div>
+    </div>
 @endsection
 @section('script')
-    <script src="//cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.js" integrity="sha512-uE2UhqPZkcKyOjeXjPCmYsW9Sudy5Vbv0XwAVnKBamQeasAVAmH6HR9j5Qpy6Itk1cxk+ypFRPeAZwNnEwNuzQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('#example').DataTable();
+            $('#table-url').DataTable();
             $('#btn-save-url').click(function() {
                 $('#form-url').submit();
+            });
+
+            $('.switch-status').click(function() {
+                var code = $(this).data('code');
+                var status = Number($(this).is(':checked'));
+                $.ajax({
+                    url: "{{ route('manage-url.switch-status') }}",
+                    type: "POST",
+                    data: {
+                        code: code,
+                        status: status,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    dataType: "JSON",
+                    success: function(data) {
+                        console.log(data);
+                        if(data.status == true){
+                            $('#liveToast').addClass('bg-success');
+                            $('.toast-body').text(data.msg);
+                            $('.toast').toast('show');
+                        } else{
+                            $('#liveToast').addClass('bg-danger');
+                            $('.toast-body').text(data.msg);
+                            $('.toast').toast('show');
+                        }
+                    }
+                });
             });
         });
     </script>

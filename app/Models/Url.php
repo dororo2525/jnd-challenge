@@ -15,5 +15,6 @@ class Url extends Model
         'code',
         'user_id',
         'hits',
+        'status',
     ];
 }

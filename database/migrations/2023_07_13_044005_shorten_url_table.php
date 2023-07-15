@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('shorten_url');
             $table->string('code');
             $table->integer('hits')->default(0);
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
     }

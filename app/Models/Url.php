@@ -21,4 +21,8 @@ class Url extends Model
     public function clicks(){
         return $this->hasMany(UrlClick::class);
     }
+
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
 }

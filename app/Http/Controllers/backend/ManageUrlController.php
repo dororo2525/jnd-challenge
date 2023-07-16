@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Url;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Log;
@@ -25,7 +26,8 @@ class ManageUrlController extends Controller
     {
         if(Auth::user()->role == 'admin'){
             $result =  Url::all();
-            return view('backend.manage-url.list', compact('result'));
+            $users = User::all();
+            return view('backend.manage-url.list', compact('result' , 'users'));
         }
         $result =  Url::where('user_id', Auth::user()->id)->get();
         return view('backend.manage-url.list', compact('result'));
@@ -55,7 +57,7 @@ class ManageUrlController extends Controller
                 'url' => $request->url,
                 'shorten_url' => url('/short').'/'. $code,
                 'code' => $code,
-                'user_id' => Auth::user()->id,
+                'user_id' => $request->has('user_id') ? $request->user_id : Auth::user()->id,
                 'hits' => 0,
                 'created_at' => Carbon::now(),
             ]);

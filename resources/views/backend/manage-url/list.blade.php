@@ -81,8 +81,19 @@
                     <div class="modal-body">
                         <form id="form-url" action="{{ route('manage-url.store') }}" method="POST">
                             @csrf
-                            <input type="text" class="form-control" id="url" name="url"
+                            <div class="{{ Auth::user()->role == 'admin' ? 'mb-3' : null }}">
+                                <input type="text" class="form-control" id="url" name="url"
                                 placeholder="https://example.com">
+                            </div>
+                            @if(Auth::user()->role == 'admin')
+                            <div class="">
+                                <select class="form-control" name="user_id" id="user_id">
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user->id }}" {{ Auth::user()->id == $user->user_id ? 'selected' : null }}>{{ $user->name }} ({{ $user->email }})</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @endif
                         </form>
                     </div>
                     <div class="modal-footer">

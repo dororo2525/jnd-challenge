@@ -23,9 +23,11 @@ Route::get('/short/{link}', [App\Http\Controllers\frontend\HomeController::class
 Auth::routes();
 Route::group(['middleware' => 'auth'],function () {
     Route::middleware(['admin'])->group(function () {
-        Route::resource('dashboard', DashboardController::class);
         Route::resource('manage-user', ManageUserController::class);
     });
+    Route::resource('dashboard', DashboardController::class);
+    Route::get('get-chart-data', [DashboardController::class, 'getClickbyCurrentDate'])->name('dashboard.get-chart-data');
+    Route::post('post-chart-data', [DashboardController::class, 'getClickbyDate'])->name('dashboard.post-chart-data');
     Route::resource('manage-url', ManageUrlController::class);
     Route::post('manage-url/switch-status', [ManageUrlController::class, 'switchStatus'])->name('manage-url.switch-status');
 });

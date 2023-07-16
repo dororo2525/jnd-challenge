@@ -17,4 +17,8 @@ class Url extends Model
         'hits',
         'status',
     ];
+
+    public function clicks(){
+        return $this->hasMany(UrlClick::class);
+    }
 }

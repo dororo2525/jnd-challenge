@@ -62,7 +62,10 @@ var emptyData = [0,0,0,0,0,0,0,0,0,0,0,0];
         url: "{{ url('get-chart-data') }}",
         dataType: "json",
         success: function (response) {
-            console.log(response);
+          if(response.length == 0){
+                $('#loading').html(`<div class="col-md-12 text-center"><h3>No Data Found</h3></div>`);
+                return false;
+            }
             var data = ``;
             $.each(response, function (indexInArray, valueOfElement) { 
                 data += `
@@ -189,7 +192,10 @@ var emptyData = [0,0,0,0,0,0,0,0,0,0,0,0];
            },
            dataType: "json",
            success: function (response) {
-               console.log(response);
+            if(response.length == 0){
+                $('#loading').html(`<div class="col-md-12 text-center"><h3>No Data Found</h3></div>`);
+                return false;
+            }
                var data = ``;
             $.each(response, function (indexInArray, valueOfElement) { 
                 data += `

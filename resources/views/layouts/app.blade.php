@@ -42,7 +42,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link text-white">
+                                <a href="{{ route('manage-url.index') }}" class="nav-link text-white">
                                     <i class="bi me-2 bi-link"></i>
                                     Shorten URL
                                 </a>

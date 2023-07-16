@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Url;
+use App\Models\UrlClick;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -115,7 +116,19 @@ class ManageUrlController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try{
+            DB::beginTransaction();
+            $result = Url::where('code', $id)->first();
+            $result->delete();
+            $click = UrlClick::where('url_id', $result->id);
+            $click->delete();
+            DB::commit();
+            return response()->json(['status' => true, 'msg' => 'Url deleted successfully!']);
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error($e->getMessage());
+            return response()->json(['status' => false, 'msg' => 'Something went wrong!']);
+        }
     }
 
     public function switchStatus(Request $request){

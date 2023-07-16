@@ -4,6 +4,7 @@
 @endsection
 @section('style')
     <link rel="stylesheet" href="//cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.17/sweetalert2.min.css" integrity="sha512-yX1R8uWi11xPfY7HDg7rkLL/9F1jq8Hyiz8qF4DV2nedX4IVl7ruR2+h3TFceHIcT5Oq7ooKi09UZbI39B7ylw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 @endsection
 @section('content')
     <section class="content">
@@ -51,7 +52,7 @@
                                     <td>
                                         <div>
                                             <a href="{{ route('manage-url.edit' , $url->code) }}" class="btn btn-warning btn-sm me-2"><i class="bi bi-pencil-square"></i></a>
-                                            <button type="button" class="btn btn-danger btn-sm"><i class="bi bi-trash3-fill"></i></button>
+                                            <button type="button" class="btn btn-danger btn-sm btn-delete" data-code="{{ $url->code }}"><i class="bi bi-trash3-fill"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -114,6 +115,7 @@
 @section('script')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.js" integrity="sha512-uE2UhqPZkcKyOjeXjPCmYsW9Sudy5Vbv0XwAVnKBamQeasAVAmH6HR9j5Qpy6Itk1cxk+ypFRPeAZwNnEwNuzQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="//cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.17/sweetalert2.all.min.js" integrity="sha512-wjrCJASpDBH8JB7IgtPThdWKRd3ieHaVvVhByChqalTP+XevVIUzj6eNHRNXRzPTaNNIJP1DinHKl5dgYoITrg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         $(document).ready(function() {
             $('#table-url').DataTable();
@@ -144,6 +146,43 @@
                             $('.toast-body').text(data.msg);
                             $('.toast').toast('show');
                         }
+                    }
+                });
+            });
+
+            $('.btn-delete').click(function(){
+                var code = $(this).data('code');
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',                    
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ url('manage-url') }}" + "/" + code,
+                            type: "DELETE",
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            dataType: "JSON",
+                            success: function(data) {
+                                console.log(data);
+                                if(data.status == true){
+                                    $('#liveToast').addClass('bg-success');
+                                    $('.toast-body').text(data.msg);
+                                    $('.toast').toast('show');
+                                    location.reload();
+                                } else{
+                                    $('#liveToast').addClass('bg-danger');
+                                    $('.toast-body').text(data.msg);
+                                    $('.toast').toast('show');
+                                }
+                            }
+                        });
                     }
                 });
             });

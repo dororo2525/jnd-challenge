@@ -17,7 +17,7 @@ class DashboardController extends Controller
     public function index()
     {
         $urls = Url::where('user_id', Auth::user()->id)->get();
-        return view('backend.dashboard.dashboard' , compact('urls'));
+        return view('backend.dashboard.dashboard', compact('urls'));
     }
 
     /**
@@ -71,29 +71,27 @@ class DashboardController extends Controller
     public function getClickbyCurrentDate()
     {
         $startDate = Carbon::now()->startOfYear();
-$endDate = Carbon::now()->endOfYear();
+        $endDate = Carbon::now()->endOfYear();
         $clickCounts = [];
-        
+
         $currentDate = $startDate->copy();
         $urls = Url::where('user_id', Auth::user()->id)->get();
         foreach ($urls as $key => $url) {
             while ($currentDate <= $endDate) {
                 $clickCount = Url::whereHas('clicks', function ($query) use ($currentDate) {
                     $query->whereYear('created_at', $currentDate->year)
-                          ->whereMonth('created_at', $currentDate->month);
+                        ->whereMonth('created_at', $currentDate->month);
                 })
-                ->where('id', $url->id)
-                ->count();
-            
+                    ->where('id', $url->id)
+                    ->count();
+
                 $clickCounts[$currentDate->format('n') - 1] = $clickCount;
-            
+
                 $currentDate->addMonth();
             }
             $urls[$key]['clicks'] = $clickCounts;
             $clickCounts = [];
         }
-        // dd($urls);
-        // $item = array_values($urls->toArray());
         return response()->json($urls);
     }
 
@@ -101,20 +99,20 @@ $endDate = Carbon::now()->endOfYear();
     {
         $startDate = Carbon::parse($request->startDate)->startOfMonth();
         $endDate = Carbon::parse($request->endDate)->endOfMonth();
-        $clickCounts = [];    
+        $clickCounts = [];
         $currentDate = $startDate->copy();
         $urls = Url::where('user_id', Auth::user()->id)->get();
         foreach ($urls as $key => $url) {
             while ($currentDate <= $endDate) {
                 $clickCount = Url::whereHas('clicks', function ($query) use ($currentDate) {
                     $query->whereYear('created_at', $currentDate->year)
-                          ->whereMonth('created_at', $currentDate->month);
+                        ->whereMonth('created_at', $currentDate->month);
                 })
-                ->where('id', $url->id)
-                ->count();
-            
+                    ->where('id', $url->id)
+                    ->count();
+
                 $clickCounts[$currentDate->format('Y-n')] = $clickCount;
-            
+
                 $currentDate->addMonth();
             }
             $urls[$key]['clicks'] = $clickCounts;

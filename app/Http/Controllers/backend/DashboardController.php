@@ -78,13 +78,10 @@ class DashboardController extends Controller
         $urls = Url::where('user_id', Auth::user()->id)->get();
         foreach ($urls as $key => $url) {
             while ($currentDate <= $endDate) {
-                $clickCount = Url::whereHas('clicks', function ($query) use ($currentDate) {
-                    $query->whereYear('created_at', $currentDate->year)
-                        ->whereMonth('created_at', $currentDate->month);
-                })
-                    ->where('id', $url->id)
-                    ->count();
-
+                $clickCount = UrlClick::whereYear('created_at', $currentDate->year)
+                        ->whereMonth('created_at', $currentDate->month)
+                        ->where('url_id', $url->id)
+                        ->count();
                 $clickCounts[$currentDate->format('n') - 1] = $clickCount;
 
                 $currentDate->addMonth();
@@ -104,12 +101,10 @@ class DashboardController extends Controller
         $urls = Url::where('user_id', Auth::user()->id)->get();
         foreach ($urls as $key => $url) {
             while ($currentDate <= $endDate) {
-                $clickCount = Url::whereHas('clicks', function ($query) use ($currentDate) {
-                    $query->whereYear('created_at', $currentDate->year)
-                        ->whereMonth('created_at', $currentDate->month);
-                })
-                    ->where('id', $url->id)
-                    ->count();
+                $clickCount = UrlClick::whereYear('created_at', $currentDate->year)
+                        ->whereMonth('created_at', $currentDate->month)
+                        ->where('url_id', $url->id)
+                        ->count();
 
                 $clickCounts[$currentDate->format('Y-n')] = $clickCount;
 

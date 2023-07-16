@@ -29,17 +29,26 @@
                     <table id="table-url" class="display" style="width:100%">
                         <thead>
                             <tr>
+                                @if(Auth::user()->role == 'admin')
+                                <th>User id</th>
+                                @endif
                                 <th>Origin Url</th>
                                 <th>Shorten Url</th>
                                 <th>Code</th>
                                 <th>Clicks</th>
                                 <th>Status</th>
+                                @if(Auth::user()->role == 'admin')
+                                <th>User</th>
+                                @endif
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($result as $url)
                                 <tr>
+                                    @if(Auth::user()->role == 'admin')
+                                    <td>{{ $url->user_id }}</td>
+                                    @endif
                                     <td><a href="{{ $url->url }}">{{ $url->url }}</a></td>
                                     <td><a href="{{ $url->shorten_url }}">{{ $url->shorten_url }}</a></td>
                                     <td>{{ $url->code }}</td>
@@ -49,6 +58,9 @@
                                             <input class="form-check-input switch-status" data-code="{{ $url->code }}" type="checkbox" role="switch" {{ $url->status == true ? 'checked' : null }}>
                                             </div>
                                     </td>
+                                    @if(Auth::user()->role == 'admin')
+                                    <td>{{ $url->user->name }}</td>
+                                    @endif
                                     <td>
                                         <div>
                                             <a href="{{ route('manage-url.edit' , $url->code) }}" class="btn btn-warning btn-sm me-2"><i class="bi bi-pencil-square"></i></a>
@@ -59,11 +71,17 @@
                             @endforeach
                         <tfoot>
                             <tr>
+                                @if(Auth::user()->role == 'admin')
+                                <th>User id</th>
+                                @endif
                                 <th>Origin Url</th>
                                 <th>Shorten Url</th>
                                 <th>Code</th>
                                 <th>Clicks</th>
                                 <th>Status</th>
+                                @if(Auth::user()->role == 'admin')
+                                <th>User</th>
+                                @endif
                                 <th>Action</th>
                             </tr>
                         </tfoot>

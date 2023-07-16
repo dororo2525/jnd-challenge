@@ -39,7 +39,7 @@
             </div>
         </div>
         </div>
-        <div class="col-md-12 mt-3" id="loading">
+        <div class="col-md-12 mt-3 mb-3" id="loading">
             <div class="text-center">
                 <div class="spinner-border" role="status">
                   <span class="visually-hidden">Loading...</span>
